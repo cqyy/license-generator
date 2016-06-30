@@ -1,9 +1,7 @@
 package com.shuzhilian.icu.license;
 
-import net.nicholaswilliams.java.licensing.FileLicenseProvider;
-import net.nicholaswilliams.java.licensing.License;
-import net.nicholaswilliams.java.licensing.LicenseManager;
-import net.nicholaswilliams.java.licensing.LicenseManagerProperties;
+import net.nicholaswilliams.java.licensing.*;
+import net.nicholaswilliams.java.licensing.exception.InvalidLicenseException;
 import net.nicholaswilliams.java.licensing.exception.KeyNotFoundException;
 import org.apache.commons.io.IOUtils;
 
@@ -44,6 +42,9 @@ public class LicenseViewer {
         LicenseManagerProperties.setLicenseProvider( (context)-> new FileLicenseProvider().getLicense(context));
         LicenseManagerProperties.setLicensePasswordProvider( ()-> licensePasswd);
 
+        LicenseManagerProperties.setLicenseValidator(license -> {
+
+        });
         LicenseManagerProperties.setCacheTimeInMinutes(5);
         LicenseManager.getInstance();
     }

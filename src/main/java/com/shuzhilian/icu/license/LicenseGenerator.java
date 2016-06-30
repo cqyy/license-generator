@@ -69,7 +69,7 @@ public class LicenseGenerator {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
 
-        License license = new License.Builder()
+        License.Builder builder = new License.Builder()
                 .withHolder(holder)
                 .withGoodAfterDate(dateFormat.parse(startDate).getTime())
                 .withGoodBeforeDate(dateFormat.parse(endDate).getTime())
@@ -77,10 +77,19 @@ public class LicenseGenerator {
                 .withIssuer(issuser)
                 .withProductKey(productId)
                 .withSubject(productName)
-                .withNumberOfLicenses(Integer.valueOf(maxCore))
-                .withVersion(Integer.valueOf(version))
-                .build();
+                .withVersion(version)
+                .withMaxUser(Integer.parseInt(maxUser))
+                .withMaxCore(Integer.parseInt(maxCore))
+                .withMaxJob(Integer.parseInt(maxJob))
+                .withMaxWorkflow(Integer.parseInt(maxWorkflow))
+                .withMachineId(machineId);
 
+        String[] operators = avaliableOperator.split(",");
+        for (String operator: operators){
+            builder.addFeature(operator.toLowerCase().trim());
+        }
+
+        License license = builder.build();
         byte[] licenseData = LicenseCreator.getInstance().signAndSerializeLicense(license,password);
 
         try {

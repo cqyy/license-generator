@@ -20,6 +20,7 @@ package net.nicholaswilliams.java.licensing;
 
 import net.nicholaswilliams.java.licensing.immutable.ImmutableLinkedHashSet;
 
+import javax.swing.plaf.ButtonUI;
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -57,7 +58,20 @@ public final class License implements Serializable, Cloneable
 
 	private final int numberOfLicenses;
 
-	private final int version;
+	//added by yuanye
+
+	private final String version;
+
+	private final int maxUser;
+
+	private final int maxCore;
+
+	private final int maxJob;
+
+	private final int maxWorkflow;
+
+	private final String machineId;
+
 
 	private final ImmutableLinkedHashSet<License.Feature> features;
 
@@ -77,6 +91,11 @@ public final class License implements Serializable, Cloneable
 		this.goodBeforeDate = builder.goodBeforeDate;
 		this.numberOfLicenses = builder.numberOfLicenses;
         this.version = builder.version;
+		this.maxUser = builder.maxUser;
+		this.maxJob  = builder.maxJob;
+		this.maxCore = builder.maxCore;
+		this.maxWorkflow = builder.maxWorkflow;
+		this.machineId = builder.machineId;
 		this.features = new ImmutableLinkedHashSet<License.Feature>(builder.features);
 	}
 
@@ -87,7 +106,7 @@ public final class License implements Serializable, Cloneable
 	 */
 	private License(String[] parts)
 	{
-		if(parts == null || parts.length != 10)
+		if(parts == null || parts.length != 15)
 			throw new IllegalArgumentException("There should be exactly nine parts to the serialized license.");
 
 		this.productKey = parts[0] == null ? "" : parts[0];
@@ -98,11 +117,16 @@ public final class License implements Serializable, Cloneable
 		this.goodAfterDate = Long.parseLong(parts[5]);
 		this.goodBeforeDate = Long.parseLong(parts[6]);
 		this.numberOfLicenses = Integer.parseInt(parts[7]);
-        this.version = Integer.parseInt(parts[8]);
+        this.version = parts[8];
+		this.maxUser = Integer.parseInt(parts[9]);
+		this.maxCore = Integer.parseInt(parts[10]);
+		this.maxJob  = Integer.parseInt(parts[11]);
+		this.maxWorkflow = Integer.parseInt(parts[12]);
+		this.machineId = parts[13];
 		Set<License.Feature> features = new LinkedHashSet<License.Feature>();
-		if(parts[9] != null && parts[9].trim().length() > 0)
+		if(parts[14] != null && parts[14].trim().length() > 0)
 		{
-			for(String feature : parts[9].split("\\, "))
+			for(String feature : parts[14].split("\\, "))
 				features.add(License.Feature.fromString(feature));
 		}
 		this.features = new ImmutableLinkedHashSet<License.Feature>(features);
@@ -225,7 +249,17 @@ public final class License implements Serializable, Cloneable
 		return this.numberOfLicenses;
 	}
 
-    public final int getVersion(){return version;}
+    public final String getVersion(){return version;}
+
+	public final int getMaxUser(){return this.maxUser;}
+
+	public final int getMaxCore(){return this.maxCore;}
+
+	public final int getMaxJob(){return this.maxJob;}
+
+	public final int getMaxWorkflow(){return this.maxWorkflow;}
+
+	public final String getMachineId(){return this.machineId;}
 
 	/**
 	 * Returns an immutable (unchangeable) list of all of the features contained within this license. For more
@@ -511,7 +545,12 @@ public final class License implements Serializable, Cloneable
 			   .append(this.goodAfterDate).append("][")
 			   .append(this.goodBeforeDate).append("][")
 			   .append(this.numberOfLicenses).append("][")
-                .append(this.version).append(']')
+               .append(this.version).append("][")
+               .append(this.maxUser).append("][")
+               .append(this.maxCore).append("][")
+               .append(this.maxJob).append("][")
+               .append(this.maxWorkflow).append("][")
+               .append(this.machineId).append("]")
 			   .append(this.features).toString();
 		return builder.toString();
 	}
@@ -698,7 +737,18 @@ public final class License implements Serializable, Cloneable
 
 		private int numberOfLicenses = Integer.MAX_VALUE;
 
-		private int version;
+
+		private String version;
+
+		private int maxUser;
+
+		private int maxCore;
+
+		private int maxJob;
+
+		private int maxWorkflow;
+
+		private String machineId;
 
 		private Set<License.Feature> features = new LinkedHashSet<License.Feature>();
 
@@ -867,12 +917,37 @@ public final class License implements Serializable, Cloneable
 		}
 
 
-		public Builder withVersion(int version){
+		public Builder withVersion(String version){
 			this.version = version;
 			return this;
 		}
 
+		public Builder withMaxUser(int maxUser){
+			this.maxUser = maxUser;
+			return this;
+		}
+
+		public Builder withMaxCore(int maxCore){
+			this.maxCore = maxCore;
+			return this;
+		}
+
+		public Builder withMaxJob(int maxJob){
+			this.maxJob = maxJob;
+			return this;
+		}
+
+		public Builder withMaxWorkflow(int maxWorkflow){
+			this.maxWorkflow = maxWorkflow;
+			return this;
+		}
+
+		public Builder withMachineId(String machineId){
+			this.machineId = machineId;
+			return this;
+		}
 		/**
+		 *
 		 * Builds the license based on the criteria in this builder, then returns it.
 		 *
 		 * @return the completed license with all of the content specified by this builder.
